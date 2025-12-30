@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Timers</title>
+
+<style>
+  body {
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+
+  .timer-box {
+    margin: 40px 0;
+  }
+
+  .timer-numbers {
+    font-weight: bold;
+  }
+
+  .red-background {
+    background-color: #ff0000;
+  }
+
+  button {
+    font-size: 18px;
+    margin: 5px;
+    padding: 8px 16px;
+  }
+
+  @media only screen and (min-width: 600px) {
+    .timer-numbers {
+      font-size: 160px;
+    }
+  }
+
+  @media only screen and (max-width: 599px) {
+    .timer-numbers {
+      font-size: 90px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ORIGINAL 7-MIN TIMER -->
+<div class="timer-box">
+  <div id="timer7" class="timer-numbers">00:00</div>
+  <button onclick="startTimer7()">Start</button>
+  <button onclick="resetTimer7()">Reset</button>
+</div>
+
+<!-- 1 MIN 30 SEC TIMER -->
+<div class="timer-box">
+  <div id="timer90" class="timer-numbers">01:30</div>
+  <button onclick="startTimer90()">Start</button>
+  <button onclick="resetTimer90()">Reset</button>
+</div>
+
+<!-- 4 MIN TIMER -->
+<div class="timer-box">
+  <div id="timer240" class="timer-numbers">04:00</div>
+  <button onclick="startTimer240()">Start</button>
+  <button onclick="resetTimer240()">Reset</button>
+</div>
+
+<script>
+/* ---------- AUDIO ---------- */
+var bell = new Audio('https://www.soundjay.com/misc/bell-ring-01.wav');
+var ring = new Audio('https://www.soundjay.com/phone/telephone-ring-01a.wav');
+
+/* ---------- HELPERS ---------- */
+function pad(n) {
+  return n < 10 ? '0' + n : n;
+}
+
+/* ---------- 7 MIN TIMER ---------- */
+let start7, interval7;
+const timer7 = document.getElementById('timer7');
+
+function startTimer7() {
+  start7 = Date.now();
+  interval7 = setInterval(() => {
+    let elapsed = Date.now() - start7;
+    let m = Math.floor(elapsed / 60000);
+    let s = Math.floor((elapsed % 60000) / 1000);
+    timer7.textContent = pad(m) + ':' + pad(s);
+
+    if (m === 6 && s === 0) {
+      bell.play();
+      document.body.classList.add('red-background');
+    }
+    if (m === 7) {
+      ring.play();
+      clearInterval(interval7);
+      document.body.classList.remove('red-background');
+    }
+  }, 1000);
+}
+
+function resetTimer7() {
+  clearInterval(interval7);
+  timer7.textContent = '00:00';
+  document.body.classList.remove('red-background');
+}
+
+/* ---------- 1 MIN 30 SEC TIMER ---------- */
+let remaining90 = 90, interval90;
+const timer90 = document.getElementById('timer90');
+
+function startTimer90() {
+  interval90 = setInterval(() => {
+    remaining90--;
+    let m = Math.floor(remaining90 / 60);
+    let s = remaining90 % 60;
+    timer90.textContent = pad(m) + ':' + pad(s);
+
+    if (remaining90 <= 0) {
+      ring.play();
+      clearInterval(interval90);
+    }
+  }, 1000);
+}
+
+function resetTimer90() {
+  clearInterval(interval90);
+  remaining90 = 90;
+  timer90.textContent = '01:30';
+}
+
+/* ---------- 4 MIN TIMER ---------- */
+let remaining240 = 240, interval240;
+const timer240 = document.getElementById('timer240');
+
+function startTimer240() {
+  interval240 = setInterval(() => {
+    remaining240--;
+    let m = Math.floor(remaining240 / 60);
+    let s = remaining240 % 60;
+    timer240.textContent = pad(m) + ':' + pad(s);
+
+    if (remaining240 <= 0) {
+      ring.play();
+      clearInterval(interval240);
+    }
+  }, 1000);
+}
+
+function resetTimer240() {
+  clearInterval(interval240);
+  remaining240 = 240;
+  timer240.textContent = '04:00';
+}
+</script>
+
+</body>
+</html>
